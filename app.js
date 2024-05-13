@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
     res.render('getUserName', { message: 'Welcome to the homepage' });
 });
 
-// GET Endpoint
+// POST Endpoint
 app.post('/chat', (req, res) => {
     let userName = req.body.username;
     const generateTextController = new GenerateTextController(userName);
