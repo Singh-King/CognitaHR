@@ -30,7 +30,6 @@ app.post('/chat', (req, res) => {
     let userName = req.body.username;
     const generateTextController = new GenerateTextController(userName);
     const user = generateTextController.getUserData()
-    console.log(user);
     if(Object.keys(user).length > 0){
         res.render('chat', {userName});
     } else{
@@ -42,19 +41,13 @@ app.post('/chat', (req, res) => {
 // POST Endpoint
 app.post('/submit', async (req, res) => {
     const data = req.query;
-    console.log(data);
     if(!data){
         res.render('getUserName', { message: 'Welcome to the homepage' })
     }
     const generateTextController = new GenerateTextController(data.username);
     const user = generateTextController.getUserData()
-    console.log(user)
     const context = generateTextController.createContextForGPT3Model(user);
-    //console.log(context);
-    // console.log(req.body.message);
     const response = await generateTextController.getResponseFromGPT3Model(context, req.body.message);
-    //console.log(response.choices[0].message);
-    // Process the submitted data
     res.send(response.content);
 });
 
