@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CognitaHR</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./styles/chat.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                Chat
+            </div>
+            <div class="card-body message-container" id="chatbox">
+                <!-- Chat messages will appear here -->
+            </div>
+            <div class="card-footer">
+                <form id="messageForm" action=/submit?username=<%= userName %> method="post">
+                    <input type="text" class="form-control" id="messageInput" name="message" placeholder="Type your message here">
+                    <button type="submit" class="btn btn-primary mt-2">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript for handling chat -->
+    <script>
+ document.getElementById('messageForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    var message = document.getElementById('messageInput').value;
+    if (message.trim() === '') {
+        return; // Don't send empty messages
+    }
+
+    // Append the user message to the chatbox
+    displayUserMessage("User: " + message);
+
+    // Display typing animation
+    displayTypingAnimation();
+
+    $.ajax({
+        type: 'POST',
+        url: '/submit?username=<%= userName %>',
+        data: { message: message },
+        success: function(response) {
+            // Remove typing animation
+            removeTypingAnimation();
+
+            // Append the system message to the chatbox
+            displaySystemMessage("System: " + response);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error sending message to server:', error);
+        }
+    });
+    document.getElementById('messageInput').value = '';
+});
+
+function displayUserMessage(message) {
+    var chatbox = document.getElementById('chatbox');
+    var messageElement = document.createElement('div');
+    messageElement.classList.add('user-message');
+    messageElement.textContent = message;
+    chatbox.appendChild(messageElement);
+}
+
+function displaySystemMessage(message) {
+    var chatbox = document.getElementById('chatbox');
+    var messageElement = document.createElement('div');
+    messageElement.classList.add('system-message');
+    messageElement.textContent = message;
+    chatbox.appendChild(messageElement);
+}
+
+function displayTypingAnimation() {
+    var chatbox = document.getElementById('chatbox');
+    var typingElement = document.createElement('div');
+    typingElement.classList.add('typing-animation');
+    typingElement.textContent = 'Typing...';
+    chatbox.appendChild(typingElement);
+}
+
+function removeTypingAnimation() {
+    var typingElement = document.querySelector('.typing-animation');
+    if (typingElement) {
+        typingElement.remove();
+    }
+}
+
+    </script>
+</body>
+</html>
